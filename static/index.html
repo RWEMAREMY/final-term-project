@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Campus Simulation</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home">Smart Campus Simulation</a>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#dashboard">Dashboard</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Applied Probability & Statistics</p>
+          <h1>AI-Based Smart Campus Simulation System</h1>
+          <p>
+            Model real campus operations with probability distributions, compare
+            scenarios, and generate useful operational insights from simulated data.
+          </p>
+          <a class="primary-link" href="#dashboard">Open Dashboard</a>
+        </div>
+        <div class="hero-visual" aria-label="Campus simulation preview">
+          <div class="pulse-grid">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="dashboard">
+        <div class="section-heading">
+          <p class="eyebrow">Simulation Dashboard</p>
+          <h2>Try the campus operation tabs</h2>
+        </div>
+
+        <div class="dashboard-shell">
+          <aside class="tabs" id="tabs" aria-label="Simulation tabs"></aside>
+
+          <section class="workspace">
+            <div class="workspace-header">
+              <div>
+                <p id="distribution" class="distribution"></p>
+                <h3 id="component-title"></h3>
+                <p id="reason" class="reason"></p>
+              </div>
+              <button id="run-button" type="button">Run Simulation</button>
+            </div>
+
+            <form id="assumptions" class="assumptions"></form>
+
+            <div class="metrics">
+              <article>
+                <span>Average</span>
+                <strong id="average">-</strong>
+              </article>
+              <article>
+                <span>Minimum</span>
+                <strong id="minimum">-</strong>
+              </article>
+              <article>
+                <span>Maximum</span>
+                <strong id="maximum">-</strong>
+              </article>
+              <article>
+                <span>AI Insight</span>
+                <strong id="insight">-</strong>
+              </article>
+            </div>
+
+            <div class="chart-panel">
+              <canvas id="chart" width="960" height="420"></canvas>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
