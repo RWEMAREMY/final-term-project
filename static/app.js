@@ -1,4 +1,6 @@
 const tabs = document.querySelector("#tabs");
+const workspace = document.querySelector(".workspace");
+const heroVisual = document.querySelector(".hero-visual");
 const title = document.querySelector("#component-title");
 const distribution = document.querySelector("#distribution");
 const reason = document.querySelector("#reason");
@@ -24,6 +26,56 @@ const order = [
   "energy-consumption",
 ];
 
+const componentVisuals = {
+  "student-arrivals": { icon: "students", label: "Student Arrivals", color: "#5fa8d3" },
+  "cafeteria-queues": { icon: "cafeteria", label: "Cafeteria Queues", color: "#f4a261" },
+  "wifi-failures": { icon: "wifi", label: "WiFi Failures", color: "#7bdff2" },
+  "shuttle-waits": { icon: "bus", label: "Shuttle Waiting", color: "#90be6d" },
+  "parking-occupancy": { icon: "parking", label: "Parking Occupancy", color: "#9d4edd" },
+  "classroom-occupancy": { icon: "classroom", label: "Classroom Occupancy", color: "#ffd166" },
+  "energy-consumption": { icon: "energy", label: "Energy Consumption", color: "#06d6a0" },
+};
+
+function createScenarioSvg(visual) {
+  const drawings = {
+    students: `<circle cx="190" cy="140" r="34"/><circle cx="270" cy="140" r="34"/><circle cx="350" cy="140" r="34"/><path d="M130 300c16-64 104-64 120 0"/><path d="M210 300c16-64 104-64 120 0"/><path d="M290 300c16-64 104-64 120 0"/><path d="M110 345h340"/>`,
+    cafeteria: `<path d="M150 145h260l-22 152H172z"/><path d="M188 105h184"/><path d="M220 104v-42"/><path d="M300 104v-42"/><path d="M166 345h248"/><circle cx="210" cy="220" r="18"/><circle cx="280" cy="220" r="18"/><circle cx="350" cy="220" r="18"/>`,
+    wifi: `<path d="M130 190c84-74 216-74 300 0"/><path d="M178 240c58-48 146-48 204 0"/><path d="M226 292c32-24 76-24 108 0"/><circle cx="280" cy="342" r="22"/><path d="M120 116h320"/>`,
+    bus: `<rect x="118" y="130" width="324" height="160" rx="28"/><path d="M150 170h260"/><path d="M170 130v160"/><path d="M390 130v160"/><circle cx="190" cy="318" r="28"/><circle cx="370" cy="318" r="28"/>`,
+    parking: `<rect x="154" y="92" width="252" height="282" rx="24"/><path d="M224 318V150h82c66 0 66 98 0 98h-82"/><path d="M224 248h82"/><path d="M116 374h328"/>`,
+    classroom: `<rect x="118" y="110" width="324" height="188" rx="18"/><path d="M155 160h250"/><path d="M155 210h170"/><path d="M170 342h220"/><path d="M220 298l-24 44"/><path d="M340 298l24 44"/>`,
+    energy: `<path d="M298 72l-116 164h86l-42 150 126-184h-88z"/><circle cx="280" cy="230" r="162"/><path d="M122 382h316"/>`,
+  };
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440"><rect width="560" height="440" rx="34" fill="none"/><g fill="none" stroke="${visual.color}" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">${drawings[visual.icon]}</g><text x="280" y="418" text-anchor="middle" fill="${visual.color}" font-family="Arial, sans-serif" font-size="34" font-weight="800">${visual.label}</text></svg>`;
+
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function applyVisual(target, component) {
+  const visual = componentVisuals[component];
+
+  if (!visual || !target) return;
+
+  target.style.setProperty("--scenario-image", createScenarioSvg(visual));
+  target.style.setProperty("--scenario-color", visual.color);
+  target.dataset.visual = component;
+}
+
+function updateScenarioVisual(component) {
+  applyVisual(workspace, component);
+}
+
+function startHeroShuffle() {
+  let index = 0;
+
+  applyVisual(heroVisual, order[index]);
+
+  window.setInterval(() => {
+    index = (index + 1) % order.length;
+    applyVisual(heroVisual, order[index]);
+  }, 4200);
+}
+
 function formatValue(value, unit) {
   return `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`;
 }
@@ -33,6 +85,7 @@ function setActive(component) {
   document.querySelectorAll(".tab").forEach((button) => {
     button.classList.toggle("active", button.dataset.component === component);
   });
+  updateScenarioVisual(component);
   renderForm();
   runSimulation();
 }
@@ -96,7 +149,20 @@ function roundedRect(context, x, y, width, height, radius) {
   context.closePath();
 }
 
+function resizeCanvasToPanel() {
+  const rect = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  const width = Math.max(320, Math.round(rect.width * ratio));
+  const height = Math.max(240, Math.round(rect.height * ratio));
+
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+}
+
 function drawChart(data) {
+  resizeCanvasToPanel();
   const width = canvas.width;
   const height = canvas.height;
   const padding = 64;
@@ -182,6 +248,7 @@ function drawChart(data) {
 }
 
 async function boot() {
+  startHeroShuffle();
   const response = await fetch("/api/config");
   const data = await response.json();
   config = data.components;
@@ -193,6 +260,12 @@ runButton.addEventListener("click", runSimulation);
 assumptions.addEventListener("input", () => {
   window.clearTimeout(assumptions.timer);
   assumptions.timer = window.setTimeout(runSimulation, 350);
+});
+
+window.addEventListener("resize", () => {
+  if (config[active]) {
+    runSimulation();
+  }
 });
 
 boot();
