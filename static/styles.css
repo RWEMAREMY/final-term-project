@@ -158,6 +158,38 @@ nav a:hover::after {
   transform: scaleX(1);
 }
 
+.site-menu-button,
+.tab-menu-button {
+  display: none;
+}
+
+.hamburger-icon {
+  display: grid;
+  gap: 4px;
+  width: 20px;
+}
+
+.hamburger-icon span {
+  background: currentColor;
+  border-radius: 2px;
+  display: block;
+  height: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  width: 100%;
+}
+
+[aria-expanded="true"] .hamburger-icon span:first-child {
+  transform: translateY(6px) rotate(45deg);
+}
+
+[aria-expanded="true"] .hamburger-icon span:nth-child(2) {
+  opacity: 0;
+}
+
+[aria-expanded="true"] .hamburger-icon span:last-child {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
 .hero-visual {
   --scenario-color: #5fa8d3;
   --scenario-image: none;
@@ -454,20 +486,122 @@ canvas {
 }
 
 @media (max-width: 560px) {
-  .topbar,
+  :root {
+    --topbar-height: 62px;
+  }
+
+  .topbar {
+    align-items: center;
+    flex-direction: row;
+    min-height: var(--topbar-height);
+    padding: 10px 16px;
+  }
+
+  .brand {
+    font-size: 0.95rem;
+    line-height: 1.15;
+    max-width: 190px;
+  }
+
+  .site-menu-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: none;
+    color: white;
+    display: inline-flex;
+    min-height: 40px;
+    padding: 0 11px;
+  }
+
+  .topbar nav {
+    background: #001621;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    display: none;
+    gap: 0;
+    left: 0;
+    padding: 8px 16px 14px;
+    position: absolute;
+    right: 0;
+    top: 100%;
+  }
+
+  .topbar nav.is-open {
+    display: grid;
+  }
+
+  .topbar nav a {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 4px;
+  }
+
+  .topbar nav a:last-child {
+    border-bottom: 0;
+  }
+
+  .dashboard {
+    padding: 30px 14px 44px;
+  }
+
+  .section-heading {
+    margin-bottom: 18px;
+  }
+
+  .section-heading h2 {
+    font-size: 2.25rem;
+    line-height: 1.02;
+  }
+
+  .tab-menu-button {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    color: #001621;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    min-height: 48px;
+    padding: 0 14px;
+    width: 100%;
+  }
+
+  .tab-menu-button:hover {
+    background: white;
+    color: #001621;
+    transform: none;
+  }
+
+  .tabs {
+    display: none;
+    grid-template-columns: 1fr;
+  }
+
+  .tabs.is-open {
+    display: grid;
+  }
+
+  .tab {
+    min-height: 46px;
+  }
+
   .workspace-header {
     align-items: stretch;
     flex-direction: column;
   }
 
-  nav {
-    justify-content: space-between;
+  .workspace-header button {
+    width: 100%;
   }
 
-  .tabs,
   .assumptions,
   .metrics {
     grid-template-columns: 1fr;
+  }
+
+  .chart-panel {
+    aspect-ratio: 4 / 3;
+    min-height: 260px;
+    padding: 6px;
   }
 
   h1 {

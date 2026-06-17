@@ -1,4 +1,8 @@
 const tabs = document.querySelector("#tabs");
+const tabMenuButton = document.querySelector("#tab-menu-button");
+const tabMenuLabel = document.querySelector("#tab-menu-label");
+const siteMenuButton = document.querySelector("#site-menu-button");
+const siteNav = document.querySelector("#site-nav");
 const workspace = document.querySelector(".workspace");
 const heroVisual = document.querySelector(".hero-visual");
 const title = document.querySelector("#component-title");
@@ -80,12 +84,26 @@ function formatValue(value, unit) {
   return `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`;
 }
 
+function closeSimulationMenu() {
+  tabs.classList.remove("is-open");
+  tabMenuButton.setAttribute("aria-expanded", "false");
+}
+
+function closeSiteMenu() {
+  siteNav.classList.remove("is-open");
+  siteMenuButton.setAttribute("aria-expanded", "false");
+}
+
 function setActive(component) {
   active = component;
+  tabMenuLabel.textContent = config[component]?.title || "Simulation menu";
   document.querySelectorAll(".tab").forEach((button) => {
     button.classList.toggle("active", button.dataset.component === component);
   });
   updateScenarioVisual(component);
+  if (window.matchMedia("(max-width: 560px)").matches) {
+    closeSimulationMenu();
+  }
   renderForm();
   runSimulation();
 }
@@ -256,6 +274,20 @@ async function boot() {
   setActive(active);
 }
 
+tabMenuButton.addEventListener("click", () => {
+  const isOpen = tabs.classList.toggle("is-open");
+  tabMenuButton.setAttribute("aria-expanded", String(isOpen));
+});
+
+siteMenuButton.addEventListener("click", () => {
+  const isOpen = siteNav.classList.toggle("is-open");
+  siteMenuButton.setAttribute("aria-expanded", String(isOpen));
+});
+
+siteNav.addEventListener("click", (event) => {
+  if (event.target.closest("a")) closeSiteMenu();
+});
+
 runButton.addEventListener("click", runSimulation);
 assumptions.addEventListener("input", () => {
   window.clearTimeout(assumptions.timer);
@@ -263,6 +295,10 @@ assumptions.addEventListener("input", () => {
 });
 
 window.addEventListener("resize", () => {
+  if (!window.matchMedia("(max-width: 560px)").matches) {
+    closeSimulationMenu();
+    closeSiteMenu();
+  }
   if (config[active]) {
     runSimulation();
   }
