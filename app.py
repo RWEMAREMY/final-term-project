@@ -255,6 +255,14 @@ class SmartCampusHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/config":
             self.send_json({"components": COMPONENTS})
             return
+        if parsed.path == "/api/simulate":
+            params = parse_qs(parsed.query)
+            component = params.pop("component", [""])[0]
+            if component not in COMPONENTS:
+                self.send_error(404, "Unknown component")
+                return
+            self.send_json(simulate(component, params))
+            return
         if parsed.path.startswith("/api/simulate/"):
             component = parsed.path.removeprefix("/api/simulate/")
             if component not in COMPONENTS:

@@ -140,7 +140,7 @@ function renderForm() {
 
 async function runSimulation() {
   const params = new URLSearchParams(new FormData(assumptions));
-  const response = await fetch(`/api/simulate/${active}?${params.toString()}`);
+  const response = await fetch(`/api/simulate?component=${encodeURIComponent(active)}&${params.toString()}`);
   const data = await response.json();
   updateMetrics(data);
   drawChart(data);
